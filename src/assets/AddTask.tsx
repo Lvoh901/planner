@@ -1,5 +1,6 @@
 import { PlusCircle, AlertCircle, Loader2 } from "lucide-react";
-import { useState, FormEvent } from "react";
+import { useState } from "react";
+import type { FormEvent } from "react";
 import supabase from "../supabase";
 
 type AddTaskProps = {
