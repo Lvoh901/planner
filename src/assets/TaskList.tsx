@@ -8,6 +8,7 @@ type Task = {
   activity: string;
   start_time: string | null;
   end_time: string | null;
+  is_completed: boolean;
 };
 
 type TaskListProps = {
@@ -15,14 +16,15 @@ type TaskListProps = {
   onDeleteTask: (id: number) => void;
   onClearTasks: () => void;
   onUpdateTask: (task: Task) => void;
+  onToggleTask: (id: number, is_completed: boolean) => void; // Add this line
   isLoading: boolean;
 };
 
-const TaskList: React.FC<TaskListProps> = ({
-  tasks,
+const TaskList: React.FC<TaskListProps> = ({  tasks,
   onDeleteTask,
   onClearTasks,
   onUpdateTask,
+  onToggleTask, // Add this line
   isLoading,
 }) => {
   const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
@@ -81,6 +83,7 @@ const TaskList: React.FC<TaskListProps> = ({
         <table className="min-w-full table-fixed sm:table-auto">
           <thead>
             <tr className="bg-blue-100 text-gray-700 uppercase text-xs sm:text-sm">
+              <th className="py-3 px-2 sm:px-4 text-center w-1/12 sm:w-auto">Status</th>
               <th className="py-3 px-2 sm:px-4 text-left w-2/5 sm:w-auto">Activity</th>
               <th className="py-3 px-2 sm:px-4 text-left w-1/5 sm:w-auto">Start</th>
               <th className="py-3 px-2 sm:px-4 text-left w-1/5 sm:w-auto">End</th>
@@ -119,7 +122,16 @@ const TaskList: React.FC<TaskListProps> = ({
                       : "hover:bg-blue-50/50"
                   }`}
                 >
-                  <td className="py-3 px-2 sm:px-4 font-medium text-gray-900 capitalize align-middle max-w-[8rem] sm:max-w-xs">
+                  <td className="py-3 px-2 sm:px-4 text-center align-middle">
+                    <input
+                      type="checkbox"
+                      checked={task.is_completed}
+                      onChange={() => onToggleTask(task.id, !task.is_completed)}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      disabled={isLoading}
+                    />
+                  </td>
+                  <td className={`py-3 px-2 sm:px-4 font-medium text-gray-900 capitalize align-middle max-w-[8rem] sm:max-w-xs ${task.is_completed ? 'line-through' : ''}`}>
                     {editingTaskId === task.id ? (
                       <input
                         type="text"

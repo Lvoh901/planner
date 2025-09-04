@@ -10,6 +10,7 @@ type Task = {
   activity: string;
   start_time: string | null;
   end_time: string | null;
+  is_completed: boolean;
 };
 
 function App() {
@@ -99,8 +100,42 @@ function App() {
     }
   }
 
+  async function handleToggleTask(taskId: number, is_completed: boolean) {
+    setIsLoading(true);
+    setErrorMessage(null);
+    try {
+      const { error } = await supabase
+        .from("planner")
+        .update({ is_completed })
+        .eq("id", taskId);
+
+      if (error) {
+        throw error;
+      } else {
+        setTasks(
+          tasks.map((task) =>
+            task.id === taskId ? { ...task, is_completed } : task
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error updating task status:", error);
+      setErrorMessage("Failed to update task status.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetchData();
+    const interval = setInterval(() => {
+      const now = new Date();
+      if (now.getHours() === 0 && now.getMinutes() === 0) {
+        handleClearTasks();
+      }
+    }, 60000); // Check every minute
+
+    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -134,6 +169,7 @@ function App() {
           onDeleteTask={handleDeleteTask}
           onClearTasks={handleClearTasks}
           onUpdateTask={handleUpdateTask}
+          onToggleTask={handleToggleTask}
           isLoading={isLoading}
         />
       </div>
