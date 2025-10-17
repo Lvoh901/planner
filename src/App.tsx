@@ -18,13 +18,19 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [session, setSession] = useState<any>(null);
+  const [isSessionLoading, setIsSessionLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    setIsSessionLoading(true);
+    console.log("Checking session...");
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Initial session:", session);
       setSession(session);
+      setIsSessionLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("Auth state changed:", session);
       setSession(session);
     });
 
@@ -154,7 +160,12 @@ function App() {
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-8">
-      {!session ? (
+      {isSessionLoading ? (
+        <div className="flex items-center justify-center gap-2">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+          <span className="text-blue-600 font-medium text-lg">Loading Session...</span>
+        </div>
+      ) : !session ? (
         <Login />
       ) : (
         <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-4">
@@ -192,10 +203,6 @@ function App() {
           />
         </div>
       )}
-
-      <footer className="text-xs text-gray-500 mt-auto mb-2 text-center">
-        &copy; {new Date().getFullYear()} Daily Planner. Made by <a href="https://odhiambolvis.tech/" className="text-blue-600 font-bold underline underline-offset-2 uppercase">Lvoh</a>
-      </footer>
     </div>
   );
 }
