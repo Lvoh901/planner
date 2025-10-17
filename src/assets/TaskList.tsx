@@ -6,8 +6,6 @@ import type { ChangeEvent } from "react";
 type Task = {
   id: number;
   activity: string;
-  start_time: string | null;
-  end_time: string | null;
   is_completed: boolean;
 };
 
@@ -50,18 +48,6 @@ const TaskList: React.FC<TaskListProps> = ({  tasks,
       setEditError("Task name is required.");
       return;
     }
-    if (!editedTask.start_time) {
-      setEditError("Start time is required.");
-      return;
-    }
-    if (!editedTask.end_time) {
-      setEditError("End time is required.");
-      return;
-    }
-    if (editedTask.end_time <= editedTask.start_time) {
-      setEditError("End time must be after start time.");
-      return;
-    }
     onUpdateTask(editedTask);
     setEditingTaskId(null);
     setEditedTask(null);
@@ -85,8 +71,6 @@ const TaskList: React.FC<TaskListProps> = ({  tasks,
             <tr className="bg-blue-100 text-gray-700 uppercase text-xs sm:text-sm">
               <th className="py-3 px-2 sm:px-4 text-center w-1/12 sm:w-auto">Status</th>
               <th className="py-3 px-2 sm:px-4 text-left w-2/5 sm:w-auto">Activity</th>
-              <th className="py-3 px-2 sm:px-4 text-left w-1/5 sm:w-auto">Start</th>
-              <th className="py-3 px-2 sm:px-4 text-left w-1/5 sm:w-auto">End</th>
               <th className="py-3 px-2 sm:px-4 text-center w-1/5 sm:w-auto">Action</th>
             </tr>
           </thead>
@@ -148,38 +132,7 @@ const TaskList: React.FC<TaskListProps> = ({  tasks,
                       <span className="truncate block">{task.activity}</span>
                     )}
                   </td>
-                  <td className="py-3 px-2 sm:px-4 text-gray-700 align-middle max-w-[5rem]">
-                    {editingTaskId === task.id ? (
-                      <input
-                        type="time"
-                        name="start_time"
-                        value={editedTask?.start_time ?? ""}
-                        onChange={handleInputChange}
-                        className="w-full bg-gray-100 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 rounded px-2 py-1 text-sm"
-                        disabled={isLoading}
-                      />
-                    ) : (
-                      <span className="font-mono text-xs sm:text-sm">
-                        {task.start_time || <span className="text-gray-300">N/A</span>}
-                      </span>
-                    )}
-                  </td>
-                  <td className="py-3 px-2 sm:px-4 text-gray-700 align-middle max-w-[5rem]">
-                    {editingTaskId === task.id ? (
-                      <input
-                        type="time"
-                        name="end_time"
-                        value={editedTask?.end_time ?? ""}
-                        onChange={handleInputChange}
-                        className="w-full bg-gray-100 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 rounded px-2 py-1 text-sm"
-                        disabled={isLoading}
-                      />
-                    ) : (
-                      <span className="font-mono text-xs sm:text-sm">
-                        {task.end_time || <span className="text-gray-300">N/A</span>}
-                      </span>
-                    )}
-                  </td>
+
                   <td className="py-3 px-2 sm:px-4 text-center align-middle">
                     <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
                       {editingTaskId === task.id ? (

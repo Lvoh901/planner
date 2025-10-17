@@ -10,8 +10,6 @@ type AddTaskProps = {
 
 const AddTask: React.FC<AddTaskProps> = ({ onTaskAdded, isLoading }) => {
   const [newTask, setNewTask] = useState<string>("");
-  const [startTime, setStartTime] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [localLoading, setLocalLoading] = useState<boolean>(false);
 
@@ -23,32 +21,18 @@ const AddTask: React.FC<AddTaskProps> = ({ onTaskAdded, isLoading }) => {
       setError("Task name is required.");
       return;
     }
-    if (!startTime) {
-      setError("Start time is required.");
-      return;
-    }
-    if (!endTime) {
-      setError("End time is required.");
-      return;
-    }
-    if (endTime <= startTime) {
-      setError("End time must be after start time.");
-      return;
-    }
     if (isLoading || localLoading) return;
 
     setLocalLoading(true);
     const { error: supabaseError } = await supabase
       .from("planner")
-      .insert([{ activity: newTask, start_time: startTime, end_time: endTime }]);
+      .insert([{ activity: newTask}]);
 
     if (supabaseError) {
       setError("Failed to add task. Please try again.");
       console.error("Error adding task:", supabaseError);
     } else {
       setNewTask("");
-      setStartTime("");
-      setEndTime("");
       if (onTaskAdded) {
         onTaskAdded();
       }
@@ -76,25 +60,7 @@ const AddTask: React.FC<AddTaskProps> = ({ onTaskAdded, isLoading }) => {
             required
           />
 
-          <input
-            type="time"
-            className="w-32 bg-white focus:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-t-lg px-4 py-2 text-gray-800 transition border border-gray-200 text-sm"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-            disabled={isLoading || localLoading}
-            aria-label="Start time"
-            required
-          />
 
-          <input
-            type="time"
-            className="w-32 bg-white focus:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-t-lg px-4 py-2 text-gray-800 transition border border-gray-200 text-sm"
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-            disabled={isLoading || localLoading}
-            aria-label="End time"
-            required
-          />
         </div>
 
         {error && (
