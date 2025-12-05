@@ -26,7 +26,7 @@ const AddTask: React.FC<AddTaskProps> = ({ onTaskAdded, isLoading }) => {
     setLocalLoading(true);
     const { error: supabaseError } = await supabase
       .from("planner")
-      .insert([{ activity: newTask}]);
+      .insert([{ activity: newTask }]);
 
     if (supabaseError) {
       setError("Failed to add task. Please try again.");
@@ -55,7 +55,7 @@ const AddTask: React.FC<AddTaskProps> = ({ onTaskAdded, isLoading }) => {
             value={newTask}
             onChange={(e) => setNewTask(e.target.value)}
             disabled={isLoading || localLoading}
-            maxLength={50}
+            // maxLength={50}
             aria-label="Task name"
             required
           />
