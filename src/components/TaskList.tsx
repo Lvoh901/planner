@@ -65,9 +65,9 @@ const TaskList: React.FC<TaskListProps> = ({
   };
 
   return (
-    <div className="container mx-auto px-5">
+    <div className="w-full">
       <div
-        className="overflow-x-auto rounded-xl shadow border border-blue-100 bg-white"
+        className="overflow-hidden rounded-2xl shadow-sm border border-white/50 bg-white/40 backdrop-blur-md"
       >
         <div
           style={{
@@ -75,22 +75,23 @@ const TaskList: React.FC<TaskListProps> = ({
             overflowY: "auto",
             overflowX: "auto",
           }}
+          className="scrollbar-thin scrollbar-thumb-purple-200 scrollbar-track-transparent"
         >
-          <table className="min-w-full table-fixed sm:table-auto">
-            <thead className="sticky top-0 z-10 bg-blue-100">
-              <tr className="bg-blue-100 text-gray-700 uppercase text-xs sm:text-sm">
-                <th className="py-3 px-2 sm:px-4 text-center w-1/12 sm:w-auto">Status</th>
-                <th className="py-3 px-2 sm:px-4 text-left w-2/5 sm:w-auto">Activity</th>
-                <th className="py-3 px-2 sm:px-4 text-center w-1/5 sm:w-auto">Action</th>
+          <table className="min-w-full">
+            <thead className="sticky top-0 z-10 bg-purple-100/90 backdrop-blur-sm text-purple-900">
+              <tr className="uppercase text-xs font-bold tracking-wider">
+                <th className="py-4 px-4 text-center w-16">Status</th>
+                <th className="py-4 px-4 text-left">Activity</th>
+                <th className="py-4 px-4 text-center w-28">Actions</th>
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="divide-y divide-purple-100/50">
               {isLoading && tasks.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-6 px-2 sm:px-6 text-center text-gray-400">
-                    <span className="inline-flex items-center gap-2 animate-pulse">
-                      <svg className="w-4 h-4 text-blue-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <td colSpan={3} className="py-12 text-center text-slate-400">
+                    <span className="inline-flex items-center gap-3 animate-pulse text-lg">
+                      <svg className="w-6 h-6 text-purple-400 animate-spin" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
                       </svg>
@@ -100,93 +101,91 @@ const TaskList: React.FC<TaskListProps> = ({
                 </tr>
               ) : tasks.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-6 px-2 sm:px-6 text-center text-gray-400">
-                    <span className="inline-flex items-center gap-2">
-                      <PencilLine className="w-4 h-4 text-blue-300" />
-                      No tasks yet. Add one above!
-                    </span>
+                  <td colSpan={3} className="py-12 text-center text-slate-500">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-2">
+                        <PencilLine className="w-6 h-6 text-purple-400" />
+                      </div>
+                      <span className="font-medium">No tasks yet. Start by adding one!</span>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 tasks.map((task) => (
                   <tr
                     key={task.id}
-                    className={`border-b last:border-b-0 transition ${editingTaskId === task.id
-                      ? "bg-blue-50/70"
-                      : "hover:bg-blue-50/50"
+                    className={`transition-colors duration-200 group ${editingTaskId === task.id
+                      ? "bg-purple-50/80"
+                      : "hover:bg-white/60 bg-transparent"
                       }`}
                   >
-                    <td className="py-3 px-2 sm:px-4 text-center align-middle">
+                    <td className="py-3 px-4 text-center align-middle">
                       <input
                         type="checkbox"
                         checked={task.is_completed}
                         onChange={() => onToggleTask(task.id, !task.is_completed)}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="w-5 h-5 text-purple-600 bg-white border-gray-300 rounded focus:ring-purple-500 focus:ring-offset-0 cursor-pointer transition-all hover:scale-110 checked:bg-green-500 checked:border-green-500"
                         disabled={isLoading}
                       />
                     </td>
 
-                    <td className={`py-3 px-2 sm:px-4 font-medium text-gray-900 capitalize align-middle max-w-[8rem] sm:max-w-xs ${task.is_completed ? 'line-through' : ''}`}>
+                    <td className={`py-3 px-4 font-medium text-slate-700 align-middle ${task.is_completed ? 'line-through text-slate-400 decoration-slate-400' : ''}`}>
                       {editingTaskId === task.id ? (
                         <input
                           type="text"
                           name="activity"
                           value={editedTask?.activity ?? ""}
                           onChange={handleInputChange}
-                          className="w-full bg-gray-100 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 rounded px-2 py-1 text-sm"
+                          className="w-full bg-white focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-lg px-3 py-2 text-sm shadow-sm"
                           disabled={isLoading}
                           autoFocus
                           placeholder="Task name"
                         />
                       ) : (
-                        <span className="block">{task.activity}</span>
+                        <span className="block text-base">{task.activity}</span>
                       )}
                     </td>
 
-                    <td className="py-3 px-2 sm:px-4 text-center align-middle">
-                      <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
+                    <td className="py-3 px-4 text-center align-middle">
+                      <div className="flex justify-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                         {editingTaskId === task.id ? (
                           <>
                             <button
-                              className="cursor-pointer"
+                              className="p-2 rounded-full hover:bg-green-100 text-green-600 transition"
                               title="Save"
-                              aria-label="Save"
                               onClick={handleSaveEdit}
                               disabled={isLoading}
                             >
-                              <Save className="w-5 h-5 text-green-600" />
+                              <Save className="w-5 h-5" />
                             </button>
 
                             <button
-                              className="cursor-pointer"
+                              className="p-2 rounded-full hover:bg-red-100 text-red-600 transition"
                               title="Cancel"
-                              aria-label="Cancel"
                               onClick={handleCancelEdit}
                               disabled={isLoading}
                             >
-                              <XCircle className="w-5 h-5 text-red-600" />
+                              <XCircle className="w-5 h-5" />
                             </button>
                           </>
                         ) : (
                           <>
                             <button
-                              className="cursor-pointer"
+                              className="p-2 rounded-full hover:bg-blue-100 text-blue-600 transition"
                               title="Edit"
-                              aria-label="Edit"
                               onClick={() => handleEditClick(task)}
                               disabled={isLoading}
                             >
-                              <PencilLine className="w-5 h-5 text-blue-600" />
+                              <PencilLine className="w-5 h-5" />
                             </button>
 
                             <button
-                              className="cursor-pointer"
+                              className="p-2 rounded-full hover:bg-red-100 text-red-600 transition"
                               title="Delete"
-                              aria-label="Delete"
                               onClick={() => onDeleteTask(task.id)}
                               disabled={isLoading}
                             >
-                              <TrashIcon className="w-5 h-5 text-red-600" />
+                              <TrashIcon className="w-5 h-5" />
                             </button>
                           </>
                         )}
@@ -204,7 +203,7 @@ const TaskList: React.FC<TaskListProps> = ({
           </table>
         </div>
       </div>
-      <div className="mt-4 flex flex-col sm:flex-row justify-end items-stretch gap-2">
+      <div className="mt-6 flex justify-end">
         <ClearTask onClearTasks={onClearTasks} isLoading={isLoading} />
       </div>
     </div>

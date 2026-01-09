@@ -1,6 +1,6 @@
 import "./App.css";
-import AddTask from "./assets/AddTask";
-import TaskList from "./assets/TaskList";
+import AddTask from "./components/AddTask";
+import TaskList from "./components/TaskList";
 import { useState, useEffect } from "react";
 import supabase from "./supabase";
 import { Loader2, AlertCircle } from "lucide-react";
@@ -159,27 +159,31 @@ function App() {
   }, [session]);
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-8">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4 sm:p-8 font-sans text-slate-800">
       {isSessionLoading ? (
-        <div className="flex items-center justify-center gap-2">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-          <span className="text-blue-600 font-medium text-lg">Loading Session...</span>
+        <div className="flex flex-col items-center justify-center gap-4 animate-pulse">
+          <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+          <span className="text-white font-medium text-xl tracking-wide">Loading Session...</span>
         </div>
       ) : !session ? (
-        <Login />
+        <div className="glass p-8 rounded-3xl shadow-2xl w-full max-w-md animate-float">
+          <Login />
+        </div>
       ) : (
-        <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-4">
+        <div className="w-full max-w-4xl glass rounded-3xl shadow-2xl p-6 sm:p-10 transition-all duration-300 backdrop-blur-xl bg-white/60 border border-white/40">
           <Logout />
 
-          <h1 className="font-bold text-center mb-2 text-blue-700 tracking-tight drop-shadow">
-            Daily Planner
-          </h1>
-          <p className="text-center text-gray-500 mb-6">
-            Organize your day, one task at a time.
-          </p>
+          <div className="mb-8 text-center">
+            <h1 className="font-bold text-4xl sm:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-purple-600 mb-2 drop-shadow-sm">
+              Daily Planner
+            </h1>
+            <p className="text-slate-600 text-lg font-medium">
+              Organize your day, simply and beautifully.
+            </p>
+          </div>
 
           {errorMessage && (
-            <div className="flex items-center justify-center gap-2 bg-red-100 border border-red-300 text-red-700 rounded-lg px-4 py-3 mb-4">
+            <div className="flex items-center justify-center gap-2 bg-red-100/80 border border-red-300 text-red-700 rounded-xl px-4 py-3 mb-6 shadow-sm backdrop-blur-md">
               <AlertCircle className="w-5 h-5" />
               <span>{errorMessage}</span>
             </div>
@@ -187,20 +191,22 @@ function App() {
 
           {isLoading && (
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
-              <span className="text-blue-600 font-medium">Loading...</span>
+              <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+              <span className="text-blue-700 font-medium">Updating...</span>
             </div>
           )}
 
-          <AddTask onTaskAdded={fetchData} isLoading={isLoading} />
-          <TaskList
-            tasks={tasks}
-            onDeleteTask={handleDeleteTask}
-            onClearTasks={handleClearTasks}
-            onUpdateTask={handleUpdateTask}
-            onToggleTask={handleToggleTask}
-            isLoading={isLoading}
-          />
+          <div className="space-y-8">
+            <AddTask onTaskAdded={fetchData} isLoading={isLoading} />
+            <TaskList
+              tasks={tasks}
+              onDeleteTask={handleDeleteTask}
+              onClearTasks={handleClearTasks}
+              onUpdateTask={handleUpdateTask}
+              onToggleTask={handleToggleTask}
+              isLoading={isLoading}
+            />
+          </div>
         </div>
       )}
     </div>
